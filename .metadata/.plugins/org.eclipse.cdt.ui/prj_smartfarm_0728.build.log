@@ -1,0 +1,10 @@
+16:28:14 **** Incremental Build of configuration Debug for project prj_smartfarm_0728 ****
+make -j12 all 
+arm-none-eabi-size  prj_smartfarm_0728.elf 
+   text	   data	    bss	    dec	    hex	filename
+  49504	    544	   2968	  53016	   cf18	prj_smartfarm_0728.elf
+Finished building: default.size.stdout
+ 
+
+16:28:14 Build Finished. 0 errors, 0 warnings. (took 327ms)
+

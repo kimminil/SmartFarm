@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="hasShownOverlayPopupBefore" value="true"/>
+	<item key="replaceBarOpen" value="false"/>
+	<list key="searchhistory">
+		<item value="Sensor_flag"/>
+		<item value="fan_in"/>
+		<item value="water"/>
+		<item value="htim4"/>
+		<item value="htim3"/>
+		<item value="ADC_CHANNEL"/>
+		<item value="channel"/>
+		<item value="fan_on"/>
+	</list>
+</section>

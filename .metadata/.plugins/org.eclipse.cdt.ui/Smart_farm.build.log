@@ -1,0 +1,96 @@
+15:58:35 **** Incremental Build of configuration Debug for project Smart_farm ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I"C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib" -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+In file included from ../Core/Src/main.c:46:
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h: In function 'DHT11_Sensor_Test':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:222:17: warning: variable 'Presence' set but not used [-Wunused-but-set-variable]
+  222 |         uint8_t Presence = 0;
+      |                 ^~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:219:18: warning: variable 'SUM' set but not used [-Wunused-but-set-variable]
+  219 |         uint16_t SUM, RH, TEMP;
+      |                  ^~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:218:49: warning: variable 'Temp_byte2' set but not used [-Wunused-but-set-variable]
+  218 |         uint8_t Rh_byte1, Rh_byte2, Temp_byte1, Temp_byte2;
+      |                                                 ^~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:218:27: warning: variable 'Rh_byte2' set but not used [-Wunused-but-set-variable]
+  218 |         uint8_t Rh_byte1, Rh_byte2, Temp_byte1, Temp_byte2;
+      |                           ^~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h: In function 'check_light':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:301:23: warning: format '%d' expects argument of type 'int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  301 |     printf("adc_val1=%d\r\n", adc_val);
+      |                      ~^       ~~~~~~~
+      |                       |       |
+      |                       int     uint32_t {aka long unsigned int}
+      |                      %ld
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:280:14: warning: unused variable 'light_msg' [-Wunused-variable]
+  280 |         char light_msg[64];
+      |              ^~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:279:15: warning: unused variable 'lux' [-Wunused-variable]
+  279 |         float lux = 0.0;
+      |               ^~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h: In function 'check_w_height1':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:427:23: warning: format '%d' expects argument of type 'int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  427 |     printf("adc_val3=%d\r\n", adc_val);
+      |                      ~^       ~~~~~~~
+      |                       |       |
+      |                       int     uint32_t {aka long unsigned int}
+      |                      %ld
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h: In function 'check_w_height2':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:450:23: warning: format '%d' expects argument of type 'int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  450 |     printf("adc_val4=%d\r\n", adc_val);
+      |                      ~^       ~~~~~~~
+      |                       |       |
+      |                       int     uint32_t {aka long unsigned int}
+      |                      %ld
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h: At top level:
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:513:12: warning: 'Cmd_values' initialized and declared 'extern'
+  513 | extern int Cmd_values[5] = {0};
+      |            ^~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h: In function 'parse_fixed_csv':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:523:34: warning: passing argument 1 of 'printf' makes pointer from integer without a cast [-Wint-conversion]
+  523 |                 printf(Cmd_values[val_idx-1]);
+      |                        ~~~~~~~~~~^~~~~~~~~~~
+      |                                  |
+      |                                  int
+In file included from ../Core/Src/main.c:29:
+C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/include/stdio.h:206:17: note: expected 'const char * restrict' but argument is of type 'int'
+  206 | int     printf (const char *__restrict, ...)
+      |                 ^
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h: In function 'process_commands':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:634:25: warning: implicit declaration of function 'Peltier_Cooling' [-Wimplicit-function-declaration]
+  634 |                         Peltier_Cooling();
+      |                         ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:637:25: warning: implicit declaration of function 'Peltier_Heating' [-Wimplicit-function-declaration]
+  637 |                         Peltier_Heating();
+      |                         ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:640:21: warning: implicit declaration of function 'Peltier_Normal' [-Wimplicit-function-declaration]
+  640 |                     Peltier_Normal();
+      |                     ^~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h: At top level:
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:691:6: warning: conflicting types for 'Peltier_Cooling'; have 'void()'
+  691 | void Peltier_Cooling()
+      |      ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:634:25: note: previous implicit declaration of 'Peltier_Cooling' with type 'void()'
+  634 |                         Peltier_Cooling();
+      |                         ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:700:6: warning: conflicting types for 'Peltier_Heating'; have 'void()'
+  700 | void Peltier_Heating()
+      |      ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:637:25: note: previous implicit declaration of 'Peltier_Heating' with type 'void()'
+  637 |                         Peltier_Heating();
+      |                         ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:708:6: warning: conflicting types for 'Peltier_Normal'; have 'void()'
+  708 | void Peltier_Normal()
+      |      ^~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/Prj_SmartFarm/stm32/prj_smartfarm/Core/My_Lib/my_library.h:640:21: note: previous implicit declaration of 'Peltier_Normal' with type 'void()'
+  640 |                     Peltier_Normal();
+      |                     ^~~~~~~~~~~~~~
+../Core/Src/main.c:50:10: fatal error: MCP2515.h: No such file or directory
+   50 | #include "MCP2515.h"
+      |          ^~~~~~~~~~~
+compilation terminated.
+make: *** [Core/Src/subdir.mk:49: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+
+15:58:35 Build Failed. 2 errors, 17 warnings. (took 402ms)
+

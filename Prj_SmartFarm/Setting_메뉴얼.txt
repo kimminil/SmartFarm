@@ -1,0 +1,142 @@
+-초기설정 과정-
+1. MariaDB id root  pw 1234 로 생성 후 로그인 및 데이터베이스 생성
+   CREATE DATABASE mysmartfarm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+2. pycharm에서 플라스크 서버 셋팅
+   (1) server 폴더 내 .env.txt 내 db 정보 수정 및 저장 후 .env.txt ->   .env 로 이름,확장자 변경   
+   (2) server 폴더로 프로젝트 열기
+   (3) 우측 아래 인터프리터 설정 들어가서 가상환경 파이썬 3.10 버전으로 생성
+   (4) 콘솔 열고 pip install -r requirements.txt
+   (5) app.py 실행
+   (6) (DB 초기 셋팅 시) 콘솔내  http://127.0.0.1:5000 접속 후 http://127.0.0.1:5000/init-db 로 접속
+   (7) 콘솔 내 http://127.0.0.1:5000 아랫줄 pc ip주소 복사해두기
+
+3. 라즈베리파이 
+   (1) 셸 열어서  프로젝트 저장 폴더 경로(cd) 들어간 후  python -m venv venv
+   (2) source venv/bin/activate
+   (3) pip install -r requirements.txt
+   (4) thonny로 prj_smartfarm.py 열기 
+    (5) 7~10번쨰줄에 플라스크에서 복사해둔 ip주소로 내용 수정
+   (6) 우측 아래 인터프리터 옵션 - 가상환경 설치된 폴더 경로 변경
+    (7) 셸 열어서 raspi-gpio get  입력하여 
+	GPIO 0: level=1 alt=4 func=TXD2 pull=NONE
+	GPIO 1: level=1 alt=4 func=RXD2 pull=UP
+	GPIO 14: level=1 alt=5 func=TXD1 pull=NONE  (보통 잡혀있음)
+	GPIO 15: level=1 alt=5 func=RXD1 pull=UP (보통 잡혀있음)
+        확인
+    (8)  (전부 다른 경우) sudo raspi-config  → Interface Options → Serial Port
+	Would you like a login shell to be accessible over serial? → No
+	Would you like the serial port hardware to be enabled? → Yes
+    (9) (GPIO 0,1만 다른 경우)sudo nano /boot/firmware/config.txt 로 열기
+    (10)    [all]
+	enable_uart=1
+	dtoverlay=uart2,txd2_pin=0,rxd2_pin=1  추가 후 저장
+    (11) sudo reboot
+    (12) raspi-gpio get 로 다시 확인
+    (13) thonny로 prj_smartfarm.p
+------------------------------------------------------------------------------------------------------
+SQLAlchemy ORM 주요 쿼리 구문 정리
+
+1. 기본 조회
+.query(Model) — 쿼리 시작
+
+.all() — 조건에 맞는 전체 결과 리스트 반환
+
+.first() — 조건에 맞는 첫 번째 결과 반환 (없으면 None)
+
+.get(pk) — 기본키로 1개 행 조회
+
+.one() — 결과가 정확히 1개일 때만 반환, 아니면 예외 발생
+
+.one_or_none() — 0개 또는 1개인 경우 반환, 여러 개면 예외
+
+2. 조건 지정 — WHERE
+.filter(condition) — SQL WHERE 조건, 여러 번 호출 가능 (AND 조건)
+
+.filter_by(**kwargs) — 간단한 필드 비교 조건, 키워드 인자 방식 (AND 조건)
+
+Model.field == value — 조건 표현식
+
+Model.field != value
+
+Model.field > value
+
+Model.field >= value
+
+Model.field < value
+
+Model.field <= value
+
+Model.field.in_([list]) — IN 조건
+
+Model.field.notin_([list])
+
+Model.field.like('pattern') — LIKE 조건
+
+Model.field.ilike('pattern') — 대소문자 구분 없는 LIKE (PostgreSQL)
+
+and_(cond1, cond2, ...) — AND 조건 묶음
+
+or_(cond1, cond2, ...) — OR 조건 묶음
+
+not_(condition) — NOT 조건
+
+3. 컬럼 및 필드 선택
+.with_entities(Model.field1, Model.field2, ...) — 특정 컬럼만 선택 (select 특정 컬럼)
+
+.add_columns(Model.field) — 기존 쿼리에 컬럼 추가
+
+4. 정렬 — ORDER BY
+.order_by(Model.field.asc()) — 오름차순 정렬 (기본)
+
+.order_by(Model.field.desc()) — 내림차순 정렬
+
+.order_by(Model.field1, Model.field2.desc()) — 여러 필드 정렬
+
+5. 그룹화 및 집계 — GROUP BY, HAVING
+.group_by(Model.field) — 그룹화
+
+.having(condition) — 그룹별 조건 (HAVING)
+
+6. 제한 및 오프셋 — LIMIT, OFFSET
+.limit(n) — 결과 개수 제한
+
+.offset(n) — 결과 건너뛰기 (페이징에 유용)
+
+7. 조인 — JOIN
+.join(OtherModel, Model.field == OtherModel.field) — 내부 조인 (INNER JOIN)
+
+.outerjoin(OtherModel, ...) — 외부 조인 (LEFT OUTER JOIN)
+
+.select_from(Model) — 조인 시작 모델 명시
+
+8. 서브쿼리
+.subquery() — 서브쿼리 생성
+
+.exists() — 서브쿼리 존재 여부 검사
+
+session.query(Model).filter(Model.field.in_(subquery)) — 서브쿼리 결과 활용
+
+9. 기타 유용 메서드
+.distinct() — 중복 제거
+
+.count() — 행 개수 반환 (SQL COUNT)
+
+.scalar() — 단일 컬럼 단일 값 반환
+
+.all() — 전체 리스트 반환
+
+.first() — 첫 번째 결과 반환
+
+.one() — 정확히 1개 결과 반환
+
+.one_or_none() — 0 또는 1개 결과 반환
+
+10. 플러시 및 커밋 (데이터 수정 후)
+session.add(obj) — 신규 객체 추가
+
+session.delete(obj) — 객체 삭제
+
+session.commit() — 변경사항 DB 반영
+
+session.flush() — 변경사항 임시 반영 (커밋 전)

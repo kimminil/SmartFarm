@@ -1,0 +1,775 @@
+
+#ifndef __my_uart_lib__
+#define __my_uart_lib__
+
+#include <stdarg.h>
+#include <math.h>
+#include "main.h"
+#include <stdio.h>
+//변수 선언
+
+//시작 선언 변수
+extern char Start_Msg[16];
+extern char msg[64];
+//============================================================================================================
+// ============================================printf문 =======================================================
+//============================================================================================================
+
+#if printf_en
+extern int __io_putchar(int ch)
+{
+#if Console_Ch1
+    //UART_HandleTypeDef huart1;
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+
+#elif Console_Ch2
+    //UART_HandleTypeDef huart2;
+    HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
+
+#elif Console_Ch3
+    //UART_HandleTypeDef huart3;
+    HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 0xFFFF);
+
+#elif Console_Ch4
+    //UART_HandleTypeDef huart4;
+    HAL_UART_Transmit(&huart4, (uint8_t *)&ch, 1, 0xFFFF);
+
+#elif Console_Ch5
+    //UART_HandleTypeDef huart3;
+    HAL_UART_Transmit(&huart5, (uint8_t *)&ch, 1, 0xFFFF);
+
+#elif Console_Ch6
+    //UART_HandleTypeDef huart3;
+    HAL_UART_Transmit(&huart6, (uint8_t *)&ch, 1, 0xFFFF);
+#endif
+    __NOP();
+  return ch;
+}
+#endif
+
+//uart  통신용
+void vprint(uint8_t ch, const char *fmt, va_list argp)
+{
+    char string[200];
+    if(0 < vsprintf(string,fmt,argp)) // build string
+    {
+      // 2022, 11, 28수정 = Ver 3.2
+     #ifdef USART_Ch_1_EN
+     	if(ch == 1) HAL_UART_Transmit(&huart1, (uint8_t*)string, strlen(string), 0xffffff); // send message via UART
+     #endif
+
+     #ifdef USART_Ch_2_EN
+     	if(ch == 2) HAL_UART_Transmit(&huart2, (uint8_t*)string, strlen(string), 0xffffff); // send message via UART
+     #endif
+
+     #ifdef USART_Ch_3_EN
+     	if(ch == 3) HAL_UART_Transmit(&huart3, (uint8_t*)string, strlen(string), 0xffffff); // send message via UART
+     #endif
+
+     #ifdef USART_Ch_4_EN
+     	if(ch == 4) HAL_UART_Transmit(&huart4, (uint8_t*)string, strlen(string), 0xffffff); // send message via UART
+     #endif
+
+     #ifdef USART_Ch_5_EN
+   	    if(ch == 5) HAL_UART_Transmit(&huart5, (uint8_t*)string, strlen(string), 0xffffff); // send message via UART
+     #endif
+
+     #ifdef USART_Ch_6_EN
+  	    if(ch == 6) HAL_UART_Transmit(&huart6, (uint8_t*)string, strlen(string), 0xffffff); // send message via UART
+     #endif
+    }
+}
+
+void my_printf(uint8_t ch, const char *fmt, ...) // custom printf() function
+{
+  va_list argp;
+  va_start(argp, fmt);
+  vprint(ch, fmt, argp); // 2023, 9, 12 수정 = 멤버변수 추가 = Ver4.4
+  va_end(argp);
+}
+
+
+
+
+
+
+
+//===============================================================================================
+//=================================온 습도 센서====================================================
+//===============================================================================================
+#if dht11_en
+
+
+
+struct DHT11
+{
+  int8_t dht11_ch;
+  int16_t while_cnt;
+  uint16_t old_temp;
+  uint16_t old_rh;
+  uint16_t dht_time;
+  uint8_t Temp_Ch1_dis;
+  uint8_t Hum_Ch1_dis;
+  uint8_t Temp_Ch2_dis;
+  uint8_t Hum_Ch2_dis;
+}dht_11_ch1 = {1, 0, 0, 0, 0, 0, 0};
+struct DHT11 *dht_ch1 = &dht_11_ch1;
+
+// GPIO Pin Set
+  #define DHT11_PORT  DHT11_GPIO_Port // main.h 참고
+  #define DHT11_PIN   DHT11_Pin       // main.h 참고
+
+// usec delay
+void delay (uint16_t time)
+{
+ /* change your code here for the delay in microseconds */
+ __HAL_TIM_SET_COUNTER(&htim6, 0);
+ while ((__HAL_TIM_GET_COUNTER(&htim6)) < time);  // 타이머 7
+}
+
+void Set_Pin_Output (GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
+{
+ GPIO_InitTypeDef GPIO_InitStruct = {0};
+ GPIO_InitStruct.Pin = GPIO_Pin;
+ GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+ GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+ HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+}
+
+void Set_Pin_Input (GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
+{
+ GPIO_InitTypeDef GPIO_InitStruct = {0};
+ GPIO_InitStruct.Pin = GPIO_Pin;
+ GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+ GPIO_InitStruct.Pull = GPIO_PULLUP;
+ HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+}
+
+void DHT11_Start (void)
+{
+ if(dht_ch1 -> dht11_ch == 1)
+   { //ch1
+   Set_Pin_Output (DHT11_PORT, DHT11_PIN);  // set the pin as output
+   HAL_GPIO_WritePin (DHT11_PORT, DHT11_PIN, 0);   // pull the pin low
+   delay(18000);   // wait for 18ms
+   HAL_GPIO_WritePin (DHT11_PORT, DHT11_PIN, 1);   // pull the pin high
+   delay (20);   // wait for 20us
+   Set_Pin_Input(DHT11_PORT, DHT11_PIN);    // set as input
+   }
+}
+
+uint8_t DHT11_Check_Response (void)
+{
+ uint8_t Response = 0;
+ delay (40);
+ if(dht_ch1 -> dht11_ch == 1)
+  { //ch1
+   if (!(HAL_GPIO_ReadPin (DHT11_PORT, DHT11_PIN)))
+    {
+     delay (80);
+     if ((HAL_GPIO_ReadPin (DHT11_PORT, DHT11_PIN))) Response = 1;
+     else Response = -1; // 255
+    }
+   while (HAL_GPIO_ReadPin(DHT11_PORT, DHT11_PIN))
+     {
+	   // wait for the pin to go low
+	   dht_ch1 -> while_cnt++;
+	   if( dht_ch1 -> while_cnt > 500) break;
+     }
+   dht_ch1 -> while_cnt = 0;
+  }
+#endif
+ return Response;
+}
+uint8_t DHT11_Read ()
+{
+ uint8_t i,j;
+ if(dht_ch1 -> dht11_ch == 1)
+  {
+   for (j=0;j<8;j++)
+    {
+	  while (!(HAL_GPIO_ReadPin (DHT11_PORT, DHT11_PIN)))
+	   {
+		  dht_ch1 -> while_cnt++;
+		// wait for the pin to go high
+		if(dht_ch1 -> while_cnt > 500) break;
+	   }
+	  dht_ch1 -> while_cnt = 0;
+	  delay (40);   // wait for 40 us
+	  if (!(HAL_GPIO_ReadPin (DHT11_PORT, DHT11_PIN)))   // if the pin is low
+	   {
+	    i&= ~(1<<(7-j));   // write 0
+	   }
+	  else i|= (1<<(7-j));  // if the pin is high, write 1
+	  while ((HAL_GPIO_ReadPin (DHT11_PORT, DHT11_PIN)))
+	   {
+		  dht_ch1 -> while_cnt++;
+		// wait for the pin to go low
+		if(dht_ch1 -> while_cnt > 500) break;
+	   }
+	  dht_ch1 -> while_cnt =  0;
+    } // for end
+  } // if-end
+ return i;
+}
+
+uint8_t DHT11_Sensor_Test()
+{
+	uint8_t Rh_byte1, Rh_byte2, Temp_byte1, Temp_byte2;
+	uint16_t SUM, RH, TEMP;
+	float Temperature = 0;
+	float Humidity = 0;
+	uint8_t Presence = 0;
+ // DHT11 Run == Main
+ DHT11_Start();
+ Presence = DHT11_Check_Response();
+ Rh_byte1 = DHT11_Read ();
+ Rh_byte2 = DHT11_Read ();
+ Temp_byte1 = DHT11_Read ();
+ Temp_byte2 = DHT11_Read ();
+ SUM = DHT11_Read();
+
+ // 정수부만 출력 됨
+ TEMP = Temp_byte1;
+ RH = Rh_byte1;
+ // 소수점 부도 출력 됨
+ Temperature = (float) TEMP;
+ Humidity = (float) RH;
+
+ if(dht_ch1 -> dht11_ch == 1)
+  {
+	if(TEMP >= 255) Temperature = dht_ch1 -> old_temp;
+	else dht_ch1 -> old_temp = Temperature;
+	if(RH >= 255) Humidity =dht_ch1 -> old_rh;
+	else dht_ch1 -> old_rh = Humidity;
+	dht_ch1 -> Temp_Ch1_dis = Temperature;
+	dht_ch1 -> Hum_Ch1_dis = Humidity;
+  }
+ HAL_Delay(500);
+ if (TEMP != 0 ||  RH != 0) return 1;
+
+
+}
+float DHT11_Run_RH()
+{
+	if(DHT11_Sensor_Test()) return dht_ch1 -> Hum_Ch1_dis;
+}
+
+float DHT11_Run_TEMP()
+{
+	if(DHT11_Sensor_Test()) return dht_ch1 -> Temp_Ch1_dis;
+}
+#endif
+// ========================================================조도센서=============================================
+#if cds_en
+struct cds
+{
+  int8_t cds_ch;
+  uint16_t old_ch1;
+  uint16_t old_ch2;
+  float cds_Ch1_dis;
+  float cds_Ch2_dis;
+}Cds_ch1 = {1, 0, 0, 0,0};
+struct cds *cds_ch1 = &Cds_ch1;
+uint8_t check_light(){
+	uint32_t adc_val = 0;
+	float lux = 0.0;
+	char light_msg[64];
+	float r_fixed = 10000.0f; // 10kΩ 고정 저항
+    if(cds_ch1 -> cds_ch == 1){
+    	ADC_ChannelConfTypeDef sConfig = {0};
+    	sConfig.Channel = ADC_CHANNEL_0;
+    	sConfig.Rank = 1;
+    	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+    	HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+    	HAL_ADC_Start(&hadc1);
+        if(HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
+        {
+    	adc_val = HAL_ADC_GetValue(&hadc1);
+    	if(adc_val == 4095 || adc_val == 0) adc_val = cds_ch1 -> old_ch1;
+    	else cds_ch1 -> old_ch1 = adc_val;
+    	float vout = ((float)adc_val * 3.3f) / 4095.0f;
+		float R_CDS = r_fixed * ((3.3 - vout) / vout);
+		cds_ch1 ->  cds_Ch1_dis = 500 / pow(R_CDS / 1000.0f, 1.4);
+
+    	}
+     }
+    HAL_ADC_Stop(&hadc1);
+    printf("adc_val1=%d\r\n", adc_val);
+    if(adc_val != 4095 || adc_val != 0) return 1;
+    else return 0;
+    }
+float read_light(){
+	if(check_light()) return cds_ch1 ->  cds_Ch1_dis;
+}
+
+#endif
+// ========================================================이산화탄소센서=============================================
+#if co2_en
+struct co2
+{
+  int8_t co2_ch;
+  uint16_t old_ch1;
+  uint16_t old_ch2;
+  float co2_Ch1_dis;
+  float co2_Ch2_dis;
+}Co2_ch1 = {1, 0, 0, 0,0};
+struct co2 *co2_ch1 = &Co2_ch1;
+
+
+float get_co2_step(uint32_t adc_val) {
+    // 12비트 ADC 기준 (0~4095)
+//    if (adc_val < 1000) return 0;           //0: < 약 700 ppm  //
+//    else if (adc_val < 2000) return 1;      //1: 700~1000 ppm
+//    else if (adc_val < 3000) return 2;      //2: 1000~2000 ppm
+    float Vref = 3.3; // OR 5.0
+	float Vout;
+	float CO2_ppm;
+
+
+	Vout = (adc_val / 4095.0) * Vref;
+
+	//센서를 만든 회사가 배포하는 PDF 문서에서 확인합니다.PWM 출력에 대한 예시:0.4V = 400 ppm2.0V = 5000 ppm
+	CO2_ppm = ((Vout - 0.4) / (2.0 - 0.4) ) * (5000 - 400) + 400;
+	printf("vout = %.1f ,Co2 ppm = %.1f\r\n",Vout, CO2_ppm);
+	return CO2_ppm;                        //3: >2000 ppm
+}
+
+
+
+uint8_t check_co2() {
+	uint32_t adc_val = 0;
+	ADC_ChannelConfTypeDef sConfig = {0};
+	sConfig.Channel = ADC_CHANNEL_1;
+	sConfig.Rank = 1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+	HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+	HAL_ADC_Start(&hadc1);
+    if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
+    {
+    	adc_val = HAL_ADC_GetValue(&hadc1);
+
+
+    	if(adc_val == 4095 || adc_val == 0) adc_val = co2_ch1 -> old_ch1;
+    	else co2_ch1 -> old_ch1 = adc_val;
+
+    	co2_ch1 ->  co2_Ch1_dis = get_co2_step(adc_val);
+	}
+    HAL_ADC_Stop(&hadc1);
+    printf("adc_val2=%d\r\n", adc_val);
+    //printf("CO2 PP, = %0.1f\r\n",co2_ch1 ->  co2_Ch1_dis);
+    if(adc_val != 4095 || adc_val != 0) return 1;
+    else return 0;
+    }
+float read_co2(){
+	if(check_co2()) return co2_ch1 ->  co2_Ch1_dis;
+}
+#endif
+// ========================================================이산화탄소센서=============================================
+
+
+
+
+
+
+
+
+
+
+#if w_height_en
+struct w_height
+{
+  int8_t w_height_ch;
+  uint16_t old_ch1;
+  uint16_t old_ch2;
+  float w_height_Ch1_dis;
+  float w_height_Ch2_dis;
+}W_height_ch1 = {1, 0, 0, 0,0};
+struct w_height *w_height_ch1 = &W_height_ch1;
+struct w_height W_height_ch2 = {1, 0, 0, 0,0};
+struct w_height *w_height_ch2 = &W_height_ch2;
+
+struct w_h
+{
+	uint8_t w1_h;
+	uint8_t w2_h;
+}W_h = {0,0};
+struct w_h *w_h = &W_h;
+
+
+uint8_t get_w_height_step(uint32_t adc_val) {
+    // 12비트 ADC 기준 (0~4095)
+    if (adc_val < 2000) return 0;
+    else return 1;
+}
+
+
+uint8_t check_w_height1() {
+	uint32_t adc_val = 0;
+	ADC_ChannelConfTypeDef sConfig = {0};
+	sConfig.Channel = ADC_CHANNEL_4;
+	sConfig.Rank = 1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+	HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+	HAL_ADC_Start(&hadc1);
+
+	if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
+    {
+    	adc_val = HAL_ADC_GetValue(&hadc1);
+    	if(adc_val == 4095 || adc_val == 0) adc_val = w_height_ch1 -> old_ch1;
+    	else w_height_ch1 -> old_ch1 = adc_val;
+		w_height_ch1 ->  w_height_Ch1_dis = get_w_height_step(adc_val);
+	}
+
+    HAL_ADC_Stop(&hadc1);
+    printf("adc_val3=%d\r\n", adc_val);
+    if(adc_val != 4095 || adc_val != 0) return 1;
+    else return 0;
+}
+
+uint8_t check_w_height2() {
+	uint32_t adc_val = 0;
+	ADC_ChannelConfTypeDef sConfig = {0};
+	sConfig.Channel = ADC_CHANNEL_5;
+	sConfig.Rank = 1;
+	sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+	HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+	HAL_ADC_Start(&hadc1);
+
+	if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
+    {
+    	adc_val = HAL_ADC_GetValue(&hadc1);
+    	if(adc_val == 4095 || adc_val == 0) adc_val = w_height_ch1 -> old_ch1;
+    	else w_height_ch1 -> old_ch1 = adc_val;
+		w_height_ch1 ->  w_height_Ch2_dis = get_w_height_step(adc_val);
+	}
+
+    HAL_ADC_Stop(&hadc1);
+    printf("adc_val4=%d\r\n", adc_val);
+    if(adc_val != 4095 || adc_val != 0) return 1;
+    else return 0;
+}
+
+uint8_t read_w_height1(){
+	if(check_w_height1()) return w_height_ch1 ->  w_height_Ch1_dis;
+}
+
+uint8_t read_w_height2(){
+	if(check_w_height2()) return w_height_ch1 ->  w_height_Ch2_dis;
+}
+
+
+//비접촉 방식
+float isWaterDetected1()
+{
+	w_h->w1_h = HAL_GPIO_ReadPin(Water_Chk_GPIO_Port, Water_Chk_Pin);
+
+	printf("Water sensor state = %d\r\n", w_h->w1_h);
+
+	return (float)(w_h->w1_h == GPIO_PIN_SET);
+}
+
+float isWaterDetected2()
+{
+	w_h->w2_h = HAL_GPIO_ReadPin(Water_Chk_GPIO_Port, Water_Chk_Pin);
+
+	printf("Water sensor state = %d\r\n", w_h->w2_h);
+
+	return (float)(w_h->w2_h == GPIO_PIN_SET);
+}
+#endif
+//===========================================Actuator===================================
+
+//===========================================서보===================================
+#if servo_en
+//void SG90_SetAngle(uint8_t angle) {
+//    // angle: 0 ~ 180
+//    // 0도: 0.5ms = 500us, 180도: 2.5ms = 2500us
+//    uint32_t pulse = 500 + (angle * 2000) / 180;
+//
+//    // 타이머 주기가 1us 단위일 때
+//    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pulse);
+//}
+
+//void test_SG90(){
+//  	for (uint8_t i = 0; i <= 180; i += 1) {
+//  		SG90_SetAngle(i);
+//  		HAL_Delay(10);
+//    }
+//    for (int i = 180; i >= 0; i -= 1) {
+//    	SG90_SetAngle(i);
+//    	HAL_Delay(10);
+//    }
+//}
+
+
+
+//
+#endif
+//===========================================ETC===================================
+//===========================================Parsing===================================
+extern int Cmd_values[5] = {0};
+void parse_fixed_csv(char* input) {
+    char temp[10] = {0};
+    int temp_idx = 0;
+    int val_idx = 0;
+
+    for (int i = 0; input[i] != '\0' && val_idx < 4; i++) {
+        if (input[i] == ',' || input[i] == '\n' || input[i] == '\r') {
+            if (temp_idx > 0) {
+            	Cmd_values[val_idx++] = atoi(temp);
+            	printf(Cmd_values[val_idx-1]);
+                temp_idx = 0;
+                memset(temp, 0, sizeof(temp));
+            }
+        } else {
+            if (temp_idx < sizeof(temp) - 1) {
+                temp[temp_idx++] = input[i];
+            }
+        }
+    }
+    // 마지막 값 처리
+    if (temp_idx > 0 && val_idx < 5) {
+    	Cmd_values[val_idx++] = atoi(temp);
+    }
+}
+
+
+
+
+//=================================FAN===================================================
+//fan3개
+//mode 1 co2 로 인해 환기 시스템
+//fan1 = 온도로 인해
+#if fan_en
+
+void fan_on(){
+	  HAL_GPIO_WritePin(Fan_On_GPIO_Port, Fan_On_Pin, GPIO_PIN_SET);
+	  printf("Fan_on\r\n");
+
+}
+
+void fan_off(){
+	  HAL_GPIO_WritePin(Fan_On_GPIO_Port, Fan_On_Pin, GPIO_PIN_RESET);
+	  printf("Fan_off\r\n");
+
+}
+
+#endif
+
+
+//==================================water pump
+// A 모터 제어 (PC9, PC8)
+//워터 펌프?
+//A-1A	PC9
+//A-1B	PC8
+//B-1A	PC5
+//B-1B	PC6
+
+
+
+
+
+
+#if water_pump_en
+
+void Water_P1_Start() {
+	HAL_GPIO_WritePin(Water_P1_GPIO_Port, Water_P1_Pin, GPIO_PIN_SET);
+	printf("Water pump1 acting\r\n");
+}
+void Water_P2_Start() {
+	HAL_GPIO_WritePin(Water_P2_GPIO_Port, Water_P2_Pin, GPIO_PIN_SET);
+	printf("Water pump2 Stop\r\n");
+}
+
+void Water_P1_Stop() {
+	HAL_GPIO_WritePin(Water_P1_GPIO_Port, Water_P1_Pin, GPIO_PIN_RESET);
+	printf("Water pump2 Start\r\n");
+}
+void Water_P2_Stop() {
+	HAL_GPIO_WritePin(Water_P2_GPIO_Port, Water_P2_Pin, GPIO_PIN_RESET);
+	printf("Water pump2 Stop\r\n");
+}
+
+#endif
+
+
+#if light_en
+//void light_on(){
+//	HAL_GPIO_WritePin(led1_GPIO_Port, led1_Pin,GPIO_PIN_SET );
+//}
+//void light_off(){
+//	HAL_GPIO_WritePin(led1_GPIO_Port, led1_Pin,GPIO_PIN_RESET );
+//}
+
+//
+void light_on(){
+	HAL_GPIO_WritePin(led1_GPIO_Port, led1_Pin,GPIO_PIN_SET );
+	HAL_GPIO_WritePin(led2_GPIO_Port, led2_Pin,GPIO_PIN_SET );
+	for(int i = 0 ; i <60000; i=i+10){
+		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, i);
+		delay(100);
+	}
+	printf("led off\r\n");
+}
+//void light_1(){
+//	HAL_GPIO_WritePin(led1_GPIO_Port, led1_Pin,GPIO_PIN_SET );
+//	HAL_GPIO_WritePin(led2_GPIO_Port, led2_Pin,GPIO_PIN_SET );
+//	printf("led off\r\n");
+//}
+#endif
+
+//
+
+
+//제어 명령어 -  팬+팰티어, led. 팬, 모터 센서(급수)
+void process_commands(int* Cmd_values) {
+    for (int i = 0; i < 5; i++) {
+        switch (i) {
+            case 0: // 온습도 관련
+                if (Cmd_values[i] == 0 ) {
+                	Peltier_Cooling();
+                }
+                else if(Cmd_values[i] == 1) {
+                	Peltier_Heating();
+                }
+                else if(Cmd_values[i] == 2) {
+                    Peltier_Normal();
+                }
+                break;
+
+            case 1: // 조도 관련
+                if (Cmd_values[i] ) {
+                   //led
+                	fan_on();
+                } else {
+                	fan_off();
+                }
+                break;
+
+            case 2: // CO2 관련
+                if (Cmd_values[i] ) {
+                	Water_P1_Start();
+                } else {
+                	Water_P1_Stop();
+                }
+                break;
+
+            case 3: // 물 펌프 1
+                if (Cmd_values[i] ) {
+                	Water_P2_Start();
+                } else {
+                    Water_P2_Stop();
+                }
+                break;
+        }
+    }
+}
+
+
+//펠티어 소자
+#if pelt_en
+//void Peltier_on_fan_on(void)
+//{
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, GPIO_PIN_SET);   // 펠티어 온
+//    HAL_GPIO_WritePin(Fan_Peltier1_GPIO_Port, Fan_Peltier1_Pin, GPIO_PIN_SET);	//펠티어 팬 1 온
+//
+//}
+//
+//
+//
+//void Peltier_off_fan_off(void)
+//{
+//
+//    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, GPIO_PIN_RESET); // 펠티오 off
+//    HAL_GPIO_WritePin(Fan_Peltier1_GPIO_Port, Fan_Peltier1_Pin, GPIO_PIN_RESET);	//펠티어 팬1 옾
+//}
+
+void Peltier_Cooling()
+{
+	printf("Cooling Mode\r\n");
+	HAL_GPIO_WritePin(Peltier1_GPIO_Port, Peltier1_Pin, GPIO_PIN_SET);   // IN1 = HIGH
+	HAL_GPIO_WritePin(Peltier2_GPIO_Port, Peltier2_Pin, GPIO_PIN_RESET); // IN2 = LOW
+	HAL_GPIO_WritePin(Fan_Peltier1_GPIO_Port, Fan_Peltier1_Pin, GPIO_PIN_SET);
+}
+
+// 난방 모드
+void Peltier_Heating()
+{
+	printf("Heating Mode\r\n");
+	HAL_GPIO_WritePin(Peltier1_GPIO_Port, Peltier1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(Peltier2_GPIO_Port, Peltier2_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(Fan_Peltier1_GPIO_Port, Fan_Peltier1_Pin, GPIO_PIN_SET);
+}
+
+void Peltier_Normal()
+{
+	printf("Normal Mode\r\n");
+	HAL_GPIO_WritePin(Peltier1_GPIO_Port, Peltier1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(Peltier1_GPIO_Port, Peltier1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(Fan_Peltier1_GPIO_Port, Fan_Peltier1_Pin, GPIO_PIN_RESET);
+}
+#endif
+//
+
+//typedef struct {
+//    int8_t co2_ch;              // 사용 채널 번호
+//    uint16_t old_ch1;           // 이전 측정값 (필터링용)
+//    uint16_t old_ch2;           // 예비 (사용 안함)
+//    float co2_Ch1_dis;          // 계산된 CO2 ppm (채널1)
+//    float co2_Ch2_dis;          // 예비 (사용 안함)
+//} CO2_Sensor_t;
+//
+//CO2_Sensor_t Co2_ch1 = {1, 0, 0, 0.0f, 0.0f};
+//CO2_Sensor_t* co2_ch1 = &Co2_ch1;
+//
+//float get_co2_step(uint32_t adc_val) {
+//    float Vref = 3.3f;
+//    float Vout = (adc_val / 4095.0f) * Vref;
+//
+//    // 센서 스펙: 0.4V = 400ppm, 2.0V = 5000ppm
+//    float CO2_ppm = ((Vout - 0.4f) / (2.0f - 0.4f)) * (5000.0f - 400.0f) + 400.0f;
+//
+//    printf("vout = %.2f V, CO2 = %.1f ppm\r\n", Vout, CO2_ppm);
+//    return CO2_ppm;
+//}
+//
+//uint8_t check_co2(void) {
+//    uint32_t adc_val = 0;
+//
+//    ADC_ChannelConfTypeDef sConfig = {0};
+//    sConfig.Channel = ADC_CHANNEL_1;           // PA1 등 사용시
+//    sConfig.Rank = 1;
+//    sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+//    HAL_ADC_ConfigChannel(&hadc1, &sConfig);
+//
+//    HAL_ADC_Start(&hadc1);
+//    if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
+//    {
+//        adc_val = HAL_ADC_GetValue(&hadc1);
+//
+//        // 필터링: 0 또는 4095는 무시
+//        if (adc_val == 0 || adc_val == 4095) {
+//            adc_val = co2_ch1->old_ch1;
+//        } else {
+//            co2_ch1->old_ch1 = adc_val;
+//        }
+//
+//        co2_ch1->co2_Ch1_dis = get_co2_step(adc_val);
+//    }
+//    HAL_ADC_Stop(&hadc1);
+//
+//    printf("adc_val = %lu\r\n", adc_val);
+//
+//    if (adc_val != 0 && adc_val != 4095)
+//        return 1;
+//    else
+//        return 0;
+//}
+//
+//float read_co2(void) {
+//    if (check_co2())
+//        return co2_ch1->co2_Ch1_dis;
+//    else
+//        return -1.0f;
+//}

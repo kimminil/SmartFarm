@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;prj_smartfarm_0728/prj_smartfarm_0722r.ioc&apos; to &apos;prj_smartfarm_0728.ioc&apos;" description="Rename resource &apos;prj_smartfarm_0722r.ioc&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="prj_smartfarm_0722r.ioc" name="prj_smartfarm_0728.ioc" stamp="1753708568914" updateReferences="true"/>
+</session>

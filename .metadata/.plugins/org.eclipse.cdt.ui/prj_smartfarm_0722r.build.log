@@ -1,0 +1,129 @@
+15:10:02 **** Incremental Build of configuration Debug for project prj_smartfarm_0722r ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I"C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib" -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+In file included from ../Core/Src/main.c:45:
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'DHT11_Sensor_Test':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:222:17: warning: variable 'Presence' set but not used [-Wunused-but-set-variable]
+  222 |         uint8_t Presence = 0;
+      |                 ^~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:219:18: warning: variable 'SUM' set but not used [-Wunused-but-set-variable]
+  219 |         uint16_t SUM, RH, TEMP;
+      |                  ^~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:218:49: warning: variable 'Temp_byte2' set but not used [-Wunused-but-set-variable]
+  218 |         uint8_t Rh_byte1, Rh_byte2, Temp_byte1, Temp_byte2;
+      |                                                 ^~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:218:27: warning: variable 'Rh_byte2' set but not used [-Wunused-but-set-variable]
+  218 |         uint8_t Rh_byte1, Rh_byte2, Temp_byte1, Temp_byte2;
+      |                           ^~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'check_light':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:300:23: warning: format '%d' expects argument of type 'int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  300 |     printf("adc_val1=%d\r\n", adc_val);
+      |                      ~^       ~~~~~~~
+      |                       |       |
+      |                       int     uint32_t {aka long unsigned int}
+      |                      %ld
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:279:14: warning: unused variable 'light_msg' [-Wunused-variable]
+  279 |         char light_msg[64];
+      |              ^~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:278:15: warning: unused variable 'lux' [-Wunused-variable]
+  278 |         float lux = 0.0;
+      |               ^~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'check_co2':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:361:23: warning: format '%d' expects argument of type 'int', but argument 2 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  361 |     printf("adc_val2=%d\r\n", adc_val);
+      |                      ~^       ~~~~~~~
+      |                       |       |
+      |                       int     uint32_t {aka long unsigned int}
+      |                      %ld
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'parse_fixed_csv':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:439:34: warning: passing argument 1 of 'printf' makes pointer from integer without a cast [-Wint-conversion]
+  439 |                 printf(Cmd_values[val_idx-1]);
+      |                        ~~~~~~~~~~^~~~~~~~~~~
+      |                                  |
+      |                                  int
+In file included from ../Core/Src/main.c:28:
+C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/include/stdio.h:206:17: note: expected 'const char * restrict' but argument is of type 'int'
+  206 | int     printf (const char *__restrict, ...)
+      |                 ^
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'process_commands':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:555:25: warning: implicit declaration of function 'Peltier_Cooling' [-Wimplicit-function-declaration]
+  555 |                         Peltier_Cooling();
+      |                         ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:558:25: warning: implicit declaration of function 'Peltier_Heating' [-Wimplicit-function-declaration]
+  558 |                         Peltier_Heating();
+      |                         ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:562:21: warning: implicit declaration of function 'Peltier_Normal' [-Wimplicit-function-declaration]
+  562 |                     Peltier_Normal();
+      |                     ^~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: At top level:
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:608:6: warning: conflicting types for 'Peltier_Cooling'; have 'void()'
+  608 | void Peltier_Cooling()
+      |      ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:555:25: note: previous implicit declaration of 'Peltier_Cooling' with type 'void()'
+  555 |                         Peltier_Cooling();
+      |                         ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:619:6: warning: conflicting types for 'Peltier_Heating'; have 'void()'
+  619 | void Peltier_Heating()
+      |      ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:558:25: note: previous implicit declaration of 'Peltier_Heating' with type 'void()'
+  558 |                         Peltier_Heating();
+      |                         ^~~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:628:6: warning: conflicting types for 'Peltier_Normal'; have 'void()'
+  628 | void Peltier_Normal()
+      |      ^~~~~~~~~~~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:562:21: note: previous implicit declaration of 'Peltier_Normal' with type 'void()'
+  562 |                     Peltier_Normal();
+      |                     ^~~~~~~~~~~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:236:54: warning: pointer targets in passing argument 2 of 'HAL_UART_Transmit' differ in signedness [-Wpointer-sign]
+  236 |                           HAL_UART_Transmit(&huart1, (char *)msg_to_Rpi, strlen(msg_to_Rpi), 10);
+      |                                                      ^~~~~~~~~~~~~~~~~~
+      |                                                      |
+      |                                                      char *
+In file included from ../Core/Inc/stm32f4xx_hal_conf.h:411,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:745:79: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'char *'
+  745 | HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size, uint32_t Timeout);
+      |                                                                ~~~~~~~~~~~~~~~^~~~~
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'DHT11_Sensor_Test':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:254:1: warning: control reaches end of non-void function [-Wreturn-type]
+  254 | }
+      | ^
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'DHT11_Run_RH':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:258:1: warning: control reaches end of non-void function [-Wreturn-type]
+  258 | }
+      | ^
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'DHT11_Run_TEMP':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:263:1: warning: control reaches end of non-void function [-Wreturn-type]
+  263 | }
+      | ^
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'read_light':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:306:1: warning: control reaches end of non-void function [-Wreturn-type]
+  306 | }
+      | ^
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h: In function 'read_co2':
+C:/Users/Administrator/STM32CubeIDE/workspace_1.19.0.1/prj_smartfarm_0722r/Core/My_Lib/my_library.h:368:1: warning: control reaches end of non-void function [-Wreturn-type]
+  368 | }
+      | ^
+arm-none-eabi-gcc -o "prj_smartfarm_0722r.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Administrator\STM32CubeIDE\workspace_1.19.0.1\prj_smartfarm_0722r\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="prj_smartfarm_0722r.map" -Wl,--gc-sections -static -u _printf_float -lm --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: prj_smartfarm_0722r.elf
+ 
+arm-none-eabi-size  prj_smartfarm_0722r.elf 
+arm-none-eabi-objdump -h -S prj_smartfarm_0722r.elf  > "prj_smartfarm_0722r.list"
+arm-none-eabi-objcopy  -O ihex prj_smartfarm_0722r.elf  "prj_smartfarm_0722r.hex"
+   text	   data	    bss	    dec	    hex	filename
+  49088	    540	   2748	  52376	   cc98	prj_smartfarm_0722r.elf
+arm-none-eabi-objcopy  -O binary prj_smartfarm_0722r.elf  "prj_smartfarm_0722r.bin"
+Finished building: default.size.stdout
+ 
+Finished building: prj_smartfarm_0722r.hex
+Finished building: prj_smartfarm_0722r.bin
+ 
+ 
+Finished building: prj_smartfarm_0722r.list
+ 
+
+15:10:04 Build Finished. 0 errors, 21 warnings. (took 2s.91ms)
+
